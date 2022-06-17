@@ -1,4 +1,5 @@
 import { TaskCreator } from "./components/taskCreator.js";
+import { TaskTable} from "./components/TaskTable.js";
 import {useState, useEffect} from 'react'
 import "./App.css";
 
@@ -12,7 +13,10 @@ function App() {
   }
 
   useEffect(() => {
-    console.log('cargo')
+    let data = localStorage.getItem('tasks');
+    if(data) {
+      setTaskItems(JSON.parse(data));
+    }
   }, []);
 
   useEffect(() => {
@@ -22,43 +26,7 @@ function App() {
   return (
     <div className="App">
       <TaskCreator createNewTask={createNewTask} />
-
-      <table>
-        <thead>
-          <tr>
-            <th>Task</th>
-            <th>Done</th>
-          </tr>
-        </thead>
-        <tbody>
-          {taskItems.map((taskItem, index) => (
-            <tr key={index}>
-              <td>{taskItem.name}</td>
-              <td>
-                <input
-                  type="checkbox"
-                  checked={taskItem.done}
-                  onChange={() => {
-                    const newTaskItems = [...taskItems];
-                    newTaskItems[index].done = !newTaskItems[index].done;
-                    setTaskItems(newTaskItems);
-                  }
-                  }
-                />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {
-        taskItems.map(task => (
-          <div>
-            {task.name}
-          </div>
-        ))
-      }
-
+      <TaskTable tasks={taskItems} />
     </div>
   );
 }
