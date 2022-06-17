@@ -1,23 +1,64 @@
-import logo from './logo.svg';
-import './App.css';
+import { TaskCreator } from "./components/taskCreator.js";
+import {useState, useEffect} from 'react'
+import "./App.css";
 
 function App() {
+  const [taskItems, setTaskItems] = useState([]);
+
+  function createNewTask(taskName) {
+    if(!taskItems.find(task => task.name === taskName)) {
+      setTaskItems([...taskItems, {name: taskName, done: false}]);
+    }
+  }
+
+  useEffect(() => {
+    console.log('cargo')
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('tasks', JSON.stringify(taskItems));
+  }, [ taskItems ])
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <TaskCreator createNewTask={createNewTask} />
+
+      <table>
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th>Done</th>
+          </tr>
+        </thead>
+        <tbody>
+          {taskItems.map((taskItem, index) => (
+            <tr key={index}>
+              <td>{taskItem.name}</td>
+              <td>
+                <input
+                  type="checkbox"
+                  checked={taskItem.done}
+                  onChange={() => {
+                    const newTaskItems = [...taskItems];
+                    newTaskItems[index].done = !newTaskItems[index].done;
+                    setTaskItems(newTaskItems);
+                  }
+                  }
+                />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {
+        taskItems.map(task => (
+          <div>
+            {task.name}
+          </div>
+        ))
+      }
+
     </div>
   );
 }
